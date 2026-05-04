@@ -38,10 +38,24 @@ if opciones in datasets:
         dataset = datasets[opciones]
 
     st.subheader(f"Base de datos {opciones}")
-    st.write(dataset.head(6))
-    st.write(dataset.shape)
+    
 
     if opciones == "vehiculos":
+
+        def rango_categoria(x):
+            if x < 100:
+                return "Bajo"
+            elif x <= 250:
+                return "Medio"
+            else:
+                return "Alto"
+
+        dataset["RangoCategoria"] = dataset["Electric_Range"].apply(rango_categoria)
+        
+        st.write(dataset.head(6))
+        st.write(dataset.shape)
+
+        
         with st.expander("Filtrar por..."):
             seleccion_filtrado = st.selectbox(
                 "Filtrar por...",
@@ -59,6 +73,9 @@ if opciones in datasets:
 
     elif opciones == "gimnasio":
         copia_gimnasio = st.session_state.datos_gimnasio
+        
+        st.write(dataset.head(6))
+        st.write(dataset.shape)
 
         with st.expander("Filtrar por..."):
             seleccion_filtrado = st.selectbox(
