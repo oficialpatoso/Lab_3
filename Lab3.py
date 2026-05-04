@@ -77,7 +77,19 @@ if opciones in datasets:
             nuevo_registro_gimnasio = {}
             
             for columnas in copia_gimnasio.columns:
-                if copia_gimnasio[columnas].dtype == "object":
+                if columnas == "Gender":
+                    valor = st.selectbox(
+                        columnas,
+                        ["Male", "Female"]
+                    )
+                
+                elif columnas == "Workout_Type":
+                    valor = st.selectbox(
+                        columnas,
+                        ["Yoga", "HIIT", "Cardio", "Strength"]
+                    )
+
+                elif copia_gimnasio[columnas].dtype == "object":
                     valor = st.text_input(f"{columnas}")
                 
                 else:
