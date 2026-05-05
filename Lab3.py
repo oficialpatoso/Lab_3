@@ -22,11 +22,15 @@ datasets = {
     "netflix":netflix
 }
 
-opciones = st.selectbox(
+opciones = st.sidebar.selectbox(
     "Selecciona una base de datos",
     ["None", "vehiculos", "gimnasio", "videojuegos", "netflix"]
 )
 
+accion = st.sidebar.selectbox(
+    "¿Qué quieres hacer?",
+    ["Inicio", "Filtros", "Agregar registro"]
+)
 
 if opciones in datasets:
     
@@ -51,16 +55,28 @@ if opciones in datasets:
                 return "Alto"
 
         dataset["RangoCategoria"] = dataset["Electric_Range"].apply(rango_categoria)
-        
-        st.write(dataset.head(6))
-        st.write(dataset.shape)
 
-        
-        with st.expander("Filtrar por..."):
+        if accion == "Inicio":
+            st.write(dataset.head(6))
+            st.write(dataset.shape)
+            estadisticas = list(dataset.select_dtypes(include="number").columns)
+            seleccionestadisticas = st.selectbox(
+                    "Estadisticas ",
+                    [None] + estadisticas
+                )
+            if seleccionestadisticas:
+                st.write(dataset[seleccionestadisticas].describe())
+            
+            with st.expander("Categorias"):
+                for columnas in dataset.columns:
+                    st.write(columnas)
+
+        elif accion == "Filtros":
             seleccion_filtrado = st.selectbox(
                 "Filtrar por...",
                 ["Año", "Precio"]
             )
+
             if seleccion_filtrado == "Año":
                 filtro_año =st.number_input("Modelo anterior al año ", min_value=2000, max_value=2025)
                 st.write(vehiculos[vehiculos["Model Year"] < filtro_año])
@@ -68,6 +84,11 @@ if opciones in datasets:
             elif seleccion_filtrado == "Precio":
                 filtro_precio =st.number_input("Precio menor a ", min_value=0.0, max_value=845000.00)
                 st.write(vehiculos[vehiculos["Base_MSRP"] < filtro_precio])
+
+        elif accion == "categorias":
+            for columnas in dataset.columns:
+                st.write(columnas)
+
 
             
 
@@ -84,10 +105,22 @@ if opciones in datasets:
 
         dataset["NivelFrecuencia"] = dataset["Workout_Frequency (days/week)"].apply(nivel_frecuencia)
 
-        st.write(dataset.head(6))
-        st.write(dataset.shape)
+        if accion == "Inicio":
+            st.write(dataset.head(6))
+            st.write(dataset.shape)
+            estadisticas = list(dataset.select_dtypes(include="number").columns)
+            seleccionestadisticas = st.selectbox(
+                    "Estadisticas ",
+                    [None] + estadisticas
+                )
+            if seleccionestadisticas:
+                st.write(dataset[seleccionestadisticas].describe())
 
-        with st.expander("Filtrar por..."):
+            with st.expander("Categorias"):
+                for columnas in dataset.columns:
+                    st.write(columnas)
+
+        elif accion == "Filtros":
             seleccion_filtrado = st.selectbox(
                 "Filtrar por...",
                 ["Calorias quemadas", "Porcentaje de grasa"]
@@ -99,8 +132,7 @@ if opciones in datasets:
             elif seleccion_filtrado == "Porcentaje de grasa":
                 filtro_porcentaje =st.number_input("Porcentaje de grasa menor o igual a ", min_value=0.0)
                 st.write(copia_gimnasio[copia_gimnasio["Fat_Percentage"] <= filtro_porcentaje])
-
-        with st.expander("Agregar nuevo registro"):
+        elif accion == "Agregar registro":
             nuevo_registro_gimnasio = {}
             
             for columnas in copia_gimnasio.columns:
@@ -127,6 +159,7 @@ if opciones in datasets:
                 nueva_fila = pd.DataFrame([nuevo_registro_gimnasio])
                 st.session_state.datos_gimnasio = pd.concat([st.session_state.datos_gimnasio, nueva_fila], ignore_index=True)
                 st.success("Agregado correctamente")
+
         
         
 
@@ -140,8 +173,23 @@ if opciones in datasets:
                 return "Media"
             else:
                 return "Alta"
+        
+        if accion == "Inicio":
+            st.write(dataset.head(6))
+            st.write(dataset.shape)
+            estadisticas = list(dataset.select_dtypes(include="number").columns)
+            seleccionestadisticas = st.selectbox(
+                    "Estadisticas ",
+                    [None] + estadisticas
+                )
+            if seleccionestadisticas:
+                st.write(dataset[seleccionestadisticas].describe())
 
-        with st.expander("Filtrar por..."):
+            with st.expander("Categorias"):
+                for columnas in dataset.columns:
+                    st.write(columnas)
+
+        elif accion == "Filtros":
             seleccion_filtrado = st.selectbox(
                 "Filtrar por...",
                 ["Precio", "Descuento"]
@@ -154,8 +202,7 @@ if opciones in datasets:
                 filtro_porcentaje =st.number_input("Porcentaje de grasa menor o igual a ", min_value=0.0)
                 st.write(copia_videojuegos[copia_videojuegos["salePercentage"] <= filtro_porcentaje])
 
-
-        with st.expander("Agregar nuevo registro"):
+        elif accion == "Agregar registro":
             nuevo_registro_videojuegos = {}
             
             for columnas in copia_videojuegos.columns:
@@ -171,6 +218,8 @@ if opciones in datasets:
                 st.session_state.datos_videojuegos = pd.concat([st.session_state.datos_videojuegos, nueva_fila], ignore_index=True)
                 st.success("Agregado correctamente")
 
+
+
     elif opciones == "netflix":
 
         def tipo_audiencia(x):
@@ -184,8 +233,23 @@ if opciones in datasets:
                 return "Adultos"
 
         dataset["TipoAudiencia"] = dataset["rating"].apply(tipo_audiencia)
-            
-        with st.expander("Filtrar por..."):
+
+        if accion == "Inicio":
+            st.write(dataset.head(6))
+            st.write(dataset.shape)
+            estadisticas = list(dataset.select_dtypes(include="number").columns)
+            seleccionestadisticas = st.selectbox(
+                    "Estadisticas ",
+                    [None] + estadisticas
+                )
+            if seleccionestadisticas:
+                st.write(dataset[seleccionestadisticas].describe())
+
+            with st.expander("Categorias"):
+                for columnas in dataset.columns:
+                    st.write(columnas)
+
+        elif accion == "Filtros":
             seleccion_filtrado = st.selectbox(
                 "Filtrar por...",
                 ["Duracion", "Ultima actualizacion"]
@@ -198,19 +262,9 @@ if opciones in datasets:
                 filtro_actualizaion =st.number_input("Ultima actualizacion antes del año ")
                 st.write(netflix[netflix["date_added"] < filtro_actualizaion])
 
-
-    estadisticas = list(dataset.select_dtypes(include="number").columns)
-    with st.expander("Estadisticas"):
-        seleccionestadisticas = st.selectbox(
-            " ",
-            [None] + estadisticas
-        )
-        if seleccionestadisticas:
-            st.write(dataset[seleccionestadisticas].describe())
-
-    with st.expander(f"Columnas {opciones}"):
-        for columnas in dataset.columns:
-            st.write(columnas)
+            
+            
+        
 
 
     
