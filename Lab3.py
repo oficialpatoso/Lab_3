@@ -73,7 +73,17 @@ if opciones in datasets:
 
     elif opciones == "gimnasio":
         copia_gimnasio = st.session_state.datos_gimnasio
-        
+
+        def nivel_frecuencia(x):
+            if x <= 3:
+                return "Baja"
+            elif x <= 5:
+                return "Moderada"
+            else:
+                return "Alta"
+
+        dataset["NivelFrecuencia"] = dataset["Workout_Frequency (days/week)"].apply(nivel_frecuencia)
+
         st.write(dataset.head(6))
         st.write(dataset.shape)
 
@@ -123,6 +133,14 @@ if opciones in datasets:
     elif opciones == "videojuegos":
         copia_videojuegos = st.session_state.datos_videojuegos
 
+        def rango_gama(x):
+            if x < 10:
+                return "Baja"
+            elif x <= 24:
+                return "Media"
+            else:
+                return "Alta"
+
         with st.expander("Filtrar por..."):
             seleccion_filtrado = st.selectbox(
                 "Filtrar por...",
@@ -154,6 +172,19 @@ if opciones in datasets:
                 st.success("Agregado correctamente")
 
     elif opciones == "netflix":
+
+        def tipo_audiencia(x):
+            if x in ["G", "TV-Y", "TV-G", "TV-Y7", "TV-Y7-FV"]:
+                return "Niños"
+            elif x in ["PG", "TV-PG"]:
+                return "Adolescentes"
+            elif x in ["PG-13", "TV-14"]:
+                return "Adultos Jóvenes"
+            else:
+                return "Adultos"
+
+        dataset["TipoAudiencia"] = dataset["rating"].apply(tipo_audiencia)
+            
         with st.expander("Filtrar por..."):
             seleccion_filtrado = st.selectbox(
                 "Filtrar por...",
@@ -181,7 +212,7 @@ if opciones in datasets:
         for columnas in dataset.columns:
             st.write(columnas)
 
-    
+
     
 
     
