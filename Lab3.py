@@ -194,14 +194,24 @@ if opciones in datasets:
                 "Filtrar por...",
                 ["Precio", "Descuento"]
             )
+            copia_videojuegos["price"] = (
+                copia_videojuegos["price"]
+                .astype(str)
+                .str.replace("$", "", regex=False)
+                .str.replace(",", "", regex=False)
+            )
+            copia_videojuegos["price"] = pd.to_numeric(copia_videojuegos["price"], errors="coerce")
+            copia_videojuegos["salePercentage"] = pd.to_numeric(copia_videojuegos["salePercentage"], errors="coerce")
+
+
             if seleccion_filtrado == "Precio":
                 filtro_precio =st.number_input("Precio mayor a ", min_value=0.0)
                 st.write(copia_videojuegos[copia_videojuegos["price"] > filtro_precio])
 
-            elif seleccion_filtrado == "Porcentaje de grasa":
-                filtro_porcentaje =st.number_input("Porcentaje de grasa menor o igual a ", min_value=0.0)
-                st.write(copia_videojuegos[copia_videojuegos["salePercentage"] <= filtro_porcentaje])
-
+            elif seleccion_filtrado == "Descuento":
+                filtro_descuento = st.number_input("Descuento menor o igual a", min_value=0.0)
+                st.write(copia_videojuegos[copia_videojuegos["salePercentage"] <= filtro_descuento])
+            
         elif accion == "Agregar registro":
             nuevo_registro_videojuegos = {}
             
@@ -254,6 +264,11 @@ if opciones in datasets:
                 "Filtrar por...",
                 ["Duracion", "Ultima actualizacion"]
             )
+
+            duracion_num = pd.to_numeric(
+                netflix["duration"].str.replace(" min", ""),
+                errors="coerce"
+                )       
             if seleccion_filtrado == "Duracion":
                 filtro_duracion =st.number_input("Duracion mayor a ")
                 st.write(netflix[netflix["duration"] > filtro_duracion])
