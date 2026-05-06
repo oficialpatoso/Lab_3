@@ -1,5 +1,42 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
+
+st.set_page_config(
+    page_title="Base de datos",
+    layout="wide",
+    initial_sidebar_state="collapsed"
+)
+
+st.markdown("""
+<style>
+header > div {
+    background-color: #000000;
+}
+            
+div[data-baseweb="select"] > div {
+    background-color: #E5FF8F;
+    color: black;
+    border-radius: 8px;
+}
+            
+html body .stApp {
+    background-color: #000000;
+    color: #FFFFFF;
+}
+            
+section[data-testid="stSidebar"] > div {
+    background-color: #000000;
+            
+div[data-baseweb="select"] svg {
+    fill: black;
+            
+}
+
+
+
+</style>
+""", unsafe_allow_html=True)
 
 st.title("Bienvenido a tu base de datos")
 
@@ -57,8 +94,35 @@ if opciones in datasets:
         dataset["RangoCategoria"] = dataset["Electric_Range"].apply(rango_categoria)
 
         if accion == "Inicio":
-            st.write(dataset.head(6))
-            st.write(dataset.shape)
+            col1, col2 = st.columns([2, 1], vertical_alignment="top")
+            with col1:
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.dataframe(dataset.head(6), use_container_width=True)
+
+            with col2:
+                columna_seleccionada = st.selectbox("", dataset.columns)
+                
+                serie = dataset[columna_seleccionada].dropna()
+                fig, ax = plt.subplots()
+                
+                if pd.api.types.is_numeric_dtype(serie):
+                    ax.hist(serie, bins=10, color="#E5FF8F")
+                else:
+                    conteo = serie.value_counts().head(10)
+                    conteo.plot(kind="bar", ax=ax, color="#E5FF8F")
+
+                ax.set_facecolor("#000000")
+                fig.patch.set_facecolor("#000000")
+                ax.tick_params(colors="white")
+                ax.set_title(columna_seleccionada, color="white")
+                st.pyplot(fig)
+
             estadisticas = list(dataset.select_dtypes(include="number").columns)
             seleccionestadisticas = st.selectbox(
                     "Estadisticas ",
@@ -66,10 +130,6 @@ if opciones in datasets:
                 )
             if seleccionestadisticas:
                 st.write(dataset[seleccionestadisticas].describe())
-            
-            with st.expander("Categorias"):
-                for columnas in dataset.columns:
-                    st.write(columnas)
 
         elif accion == "Filtros":
             seleccion_filtrado = st.selectbox(
@@ -80,17 +140,11 @@ if opciones in datasets:
             if seleccion_filtrado == "Año":
                 filtro_año =st.number_input("Modelo anterior al año ", min_value=2000, max_value=2025)
                 st.write(vehiculos[vehiculos["Model Year"] < filtro_año])
+                
 
             elif seleccion_filtrado == "Precio":
                 filtro_precio =st.number_input("Precio menor a ", min_value=0.0, max_value=845000.00)
                 st.write(vehiculos[vehiculos["Base_MSRP"] < filtro_precio])
-
-        elif accion == "categorias":
-            for columnas in dataset.columns:
-                st.write(columnas)
-
-
-            
 
     elif opciones == "gimnasio":
         copia_gimnasio = st.session_state.datos_gimnasio
@@ -106,8 +160,36 @@ if opciones in datasets:
         dataset["NivelFrecuencia"] = dataset["Workout_Frequency (days/week)"].apply(nivel_frecuencia)
 
         if accion == "Inicio":
-            st.write(dataset.head(6))
-            st.write(dataset.shape)
+            col1, col2 = st.columns([2, 1], vertical_alignment="top")
+            with col1:
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.dataframe(dataset.head(6), use_container_width=True)
+
+            with col2:
+                columna_seleccionada = st.selectbox("", dataset.columns)
+                
+                serie = dataset[columna_seleccionada].dropna()
+                fig, ax = plt.subplots()
+                
+                if pd.api.types.is_numeric_dtype(serie):
+                    ax.hist(serie, bins=10, color="#E5FF8F")
+                else:
+                    conteo = serie.value_counts().head(10)
+                    conteo.plot(kind="bar", ax=ax, color="#E5FF8F")
+
+                ax.set_facecolor("#000000")
+                fig.patch.set_facecolor("#000000")
+                ax.tick_params(colors="white")
+                ax.set_title(columna_seleccionada, color="white")
+                st.pyplot(fig)
+
+
             estadisticas = list(dataset.select_dtypes(include="number").columns)
             seleccionestadisticas = st.selectbox(
                     "Estadisticas ",
@@ -115,10 +197,6 @@ if opciones in datasets:
                 )
             if seleccionestadisticas:
                 st.write(dataset[seleccionestadisticas].describe())
-
-            with st.expander("Categorias"):
-                for columnas in dataset.columns:
-                    st.write(columnas)
 
         elif accion == "Filtros":
             seleccion_filtrado = st.selectbox(
@@ -132,6 +210,7 @@ if opciones in datasets:
             elif seleccion_filtrado == "Porcentaje de grasa":
                 filtro_porcentaje =st.number_input("Porcentaje de grasa menor o igual a ", min_value=0.0)
                 st.write(copia_gimnasio[copia_gimnasio["Fat_Percentage"] <= filtro_porcentaje])
+
         elif accion == "Agregar registro":
             nuevo_registro_gimnasio = {}
             
@@ -160,8 +239,6 @@ if opciones in datasets:
                 st.session_state.datos_gimnasio = pd.concat([st.session_state.datos_gimnasio, nueva_fila], ignore_index=True)
                 st.success("Agregado correctamente")
 
-        
-        
 
     elif opciones == "videojuegos":
         copia_videojuegos = st.session_state.datos_videojuegos
@@ -175,8 +252,36 @@ if opciones in datasets:
                 return "Alta"
         
         if accion == "Inicio":
-            st.write(dataset.head(6))
-            st.write(dataset.shape)
+            col1, col2 = st.columns([2, 1], vertical_alignment="top")
+            with col1:
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.dataframe(dataset.head(6), use_container_width=True)
+
+            with col2:
+                columna_seleccionada = st.selectbox("", dataset.columns)
+                
+                serie = dataset[columna_seleccionada].dropna()
+                fig, ax = plt.subplots()
+                
+                if pd.api.types.is_numeric_dtype(serie):
+                    ax.hist(serie, bins=10, color="#E5FF8F")
+                else:
+                    conteo = serie.value_counts().head(10)
+                    conteo.plot(kind="bar", ax=ax, color="#E5FF8F")
+
+                ax.set_facecolor("#000000")
+                fig.patch.set_facecolor("#000000")
+                ax.tick_params(colors="white")
+                ax.set_title(columna_seleccionada, color="white")
+                st.pyplot(fig)
+
+
             estadisticas = list(dataset.select_dtypes(include="number").columns)
             seleccionestadisticas = st.selectbox(
                     "Estadisticas ",
@@ -184,10 +289,6 @@ if opciones in datasets:
                 )
             if seleccionestadisticas:
                 st.write(dataset[seleccionestadisticas].describe())
-
-            with st.expander("Categorias"):
-                for columnas in dataset.columns:
-                    st.write(columnas)
 
         elif accion == "Filtros":
             seleccion_filtrado = st.selectbox(
@@ -203,15 +304,14 @@ if opciones in datasets:
             copia_videojuegos["price"] = pd.to_numeric(copia_videojuegos["price"], errors="coerce")
             copia_videojuegos["salePercentage"] = pd.to_numeric(copia_videojuegos["salePercentage"], errors="coerce")
 
-
             if seleccion_filtrado == "Precio":
                 filtro_precio =st.number_input("Precio mayor a ", min_value=0.0)
                 st.write(copia_videojuegos[copia_videojuegos["price"] > filtro_precio])
 
-            elif seleccion_filtrado == "Descuento":
-                filtro_descuento = st.number_input("Descuento menor o igual a", min_value=0.0)
-                st.write(copia_videojuegos[copia_videojuegos["salePercentage"] <= filtro_descuento])
-            
+            elif seleccion_filtrado == "Porcentaje de grasa":
+                filtro_porcentaje =st.number_input("Porcentaje de grasa menor o igual a ", min_value=0.0)
+                st.write(copia_videojuegos[copia_videojuegos["salePercentage"] <= filtro_porcentaje])
+
         elif accion == "Agregar registro":
             nuevo_registro_videojuegos = {}
             
@@ -228,8 +328,6 @@ if opciones in datasets:
                 st.session_state.datos_videojuegos = pd.concat([st.session_state.datos_videojuegos, nueva_fila], ignore_index=True)
                 st.success("Agregado correctamente")
 
-
-
     elif opciones == "netflix":
 
         def tipo_audiencia(x):
@@ -245,8 +343,35 @@ if opciones in datasets:
         dataset["TipoAudiencia"] = dataset["rating"].apply(tipo_audiencia)
 
         if accion == "Inicio":
-            st.write(dataset.head(6))
-            st.write(dataset.shape)
+            col1, col2 = st.columns([2, 1], vertical_alignment="top")
+            with col1:
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.write("")
+                st.dataframe(dataset.head(6), use_container_width=True)
+
+            with col2:
+                columna_seleccionada = st.selectbox("", dataset.columns)
+                
+                serie = dataset[columna_seleccionada].dropna()
+                fig, ax = plt.subplots()
+                
+                if pd.api.types.is_numeric_dtype(serie):
+                    ax.hist(serie, bins=10, color="#E5FF8F")
+                else:
+                    conteo = serie.value_counts().head(10)
+                    conteo.plot(kind="bar", ax=ax, color="#E5FF8F")
+
+                ax.set_facecolor("#000000")
+                fig.patch.set_facecolor("#000000")
+                ax.tick_params(colors="white")
+                ax.set_title(columna_seleccionada, color="white")
+                st.pyplot(fig)
+
             estadisticas = list(dataset.select_dtypes(include="number").columns)
             seleccionestadisticas = st.selectbox(
                     "Estadisticas ",
@@ -255,20 +380,11 @@ if opciones in datasets:
             if seleccionestadisticas:
                 st.write(dataset[seleccionestadisticas].describe())
 
-            with st.expander("Categorias"):
-                for columnas in dataset.columns:
-                    st.write(columnas)
-
         elif accion == "Filtros":
             seleccion_filtrado = st.selectbox(
                 "Filtrar por...",
                 ["Duracion", "Ultima actualizacion"]
             )
-
-            duracion_num = pd.to_numeric(
-                netflix["duration"].str.replace(" min", ""),
-                errors="coerce"
-                )       
             if seleccion_filtrado == "Duracion":
                 filtro_duracion =st.number_input("Duracion mayor a ")
                 st.write(netflix[netflix["duration"] > filtro_duracion])
@@ -276,7 +392,6 @@ if opciones in datasets:
             elif seleccion_filtrado == "Ultima actualizacion":
                 filtro_actualizaion =st.number_input("Ultima actualizacion antes del año ")
                 st.write(netflix[netflix["date_added"] < filtro_actualizaion])
-
             
             
         
