@@ -92,6 +92,8 @@ if opciones in datasets:
                 return "Alto"
 
         dataset["RangoCategoria"] = dataset["Electric_Range"].apply(rango_categoria)
+        st.session_state.vehiculos = dataset
+        dataset.to_csv("vehiculos_actualizado.csv", index=False)
 
         if accion == "Inicio":
             col1, col2 = st.columns([2, 1], vertical_alignment="top")
@@ -158,6 +160,8 @@ if opciones in datasets:
                 return "Alta"
 
         dataset["NivelFrecuencia"] = dataset["Workout_Frequency (days/week)"].apply(nivel_frecuencia)
+        st.session_state.datos_gimnasio = dataset
+        dataset.to_csv("gimnasio_actualizado.csv", index=False)
 
         if accion == "Inicio":
             col1, col2 = st.columns([2, 1], vertical_alignment="top")
@@ -301,8 +305,13 @@ if opciones in datasets:
                 .str.replace("$", "", regex=False)
                 .str.replace(",", "", regex=False)
             )
+            
             copia_videojuegos["price"] = pd.to_numeric(copia_videojuegos["price"], errors="coerce")
             copia_videojuegos["salePercentage"] = pd.to_numeric(copia_videojuegos["salePercentage"], errors="coerce")
+            dataset["price"] = copia_videojuegos["price"]
+            dataset["RangoGama"] = dataset["price"].apply(rango_gama)
+            st.session_state.datos_videojuegos = dataset
+            dataset.to_csv("videojuegos_actualizado.csv", index=False)
 
             if seleccion_filtrado == "Precio":
                 filtro_precio =st.number_input("Precio mayor a ", min_value=0.0)
@@ -341,6 +350,8 @@ if opciones in datasets:
                 return "Adultos"
 
         dataset["TipoAudiencia"] = dataset["rating"].apply(tipo_audiencia)
+        st.session_state.netflix = dataset
+        dataset.to_csv("netflix_actualizado.csv", index=False)
 
         if accion == "Inicio":
             col1, col2 = st.columns([2, 1], vertical_alignment="top")
